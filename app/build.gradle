@@ -37,7 +37,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.AndroidLab:PreferencesDelegate:1.0.2'
+    implementation(project(":dynamic_theme"))
+    implementation "androidx.navigation:navigation-fragment-ktx:2.6.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.6.0"
 
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'

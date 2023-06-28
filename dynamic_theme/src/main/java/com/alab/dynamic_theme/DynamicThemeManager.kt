@@ -36,7 +36,7 @@ class DynamicThemeManager<T : DynamicTheme>(
         }
 
     init {
-        _themeLiveData.value = when(themePreferences.dynamicThemeType) {
+        _themeLiveData.value = when (themePreferences.dynamicThemeType) {
             DynamicThemeType.LIGHT -> lightDarkThemes.first
             DynamicThemeType.DARK -> lightDarkThemes.second
         }
@@ -60,7 +60,8 @@ class DynamicThemeManager<T : DynamicTheme>(
         /**
          * Returns an instance with a specific theme.
          */
-        fun <T : DynamicTheme> getInstance(): DynamicThemeManager<T> = manager as DynamicThemeManager<T>
+        fun <T : DynamicTheme> getInstance(): DynamicThemeManager<T> =
+            manager as DynamicThemeManager<T>
 
         /**
          * Manager initialization
@@ -69,7 +70,12 @@ class DynamicThemeManager<T : DynamicTheme>(
             lightDarkThemes: Pair<T, T>,
             requireContext: () -> Context
         ) {
-            manager = DynamicThemeManager(lightDarkThemes, requireContext)
+            manager = DynamicThemeManager(
+                lightDarkThemes.apply {
+                    first.context = requireContext()
+                    second.context = requireContext()
+                }, requireContext
+            )
         }
     }
 
