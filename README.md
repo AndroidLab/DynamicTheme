@@ -1,6 +1,6 @@
 # DynamicTheme
 Dynamic change of the android app theme, as in telegram
-# Preview
+# How to use
 1\. Create an abstract class 'MyAppTheme' that extends 'DynamicTheme'.
 ```
 abstract class MyAppTheme : DynamicTheme() {
