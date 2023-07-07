@@ -1,5 +1,5 @@
 # DynamicTheme
-Dynamic change of the android app theme, as in telegram
+Dynamic change of the android app theme, as telegram
 
 # Preview
 ![easy_drag](./app/assets/gif/1.gif)
