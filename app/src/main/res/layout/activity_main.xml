@@ -82,7 +82,7 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView"
             android:name="com.alab.dynamictheme.DrawerFragment"
-            android:layout_width="200dp"
+            android:layout_width="260dp"
             android:layout_height="match_parent"
             android:layout_gravity="start" />
 

@@ -28,6 +28,12 @@
                 android:text="Page 1\nWithout data binding"
                 android:textSize="18sp" />
 
+            <include
+                layout="@layout/theme_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp" />
+
         </LinearLayout>
 
     </FrameLayout>

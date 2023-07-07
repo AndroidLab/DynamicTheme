@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.alab.dynamic_theme.DynamicThemeManager" />
+
+        <import type="com.alab.dynamic_theme.DynamicThemeType" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:onClick="@{(view) -> DynamicThemeManager.manager.currentTheme.type == DynamicThemeType.DARK ? DynamicThemeManager.manager.changeTheme(view) : null}"
+            android:text="Light"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{(view) -> DynamicThemeManager.manager.currentTheme.type == DynamicThemeType.LIGHT ? DynamicThemeManager.manager.changeTheme(view) : null}"
+            android:text="Dark"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</layout>

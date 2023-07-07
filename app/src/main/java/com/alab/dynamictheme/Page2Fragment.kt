@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.alab.dynamic_theme.DynamicThemeFragment
+import com.alab.dynamic_theme.DynamicThemeManager
+import com.alab.dynamic_theme.DynamicThemeType
 import com.alab.dynamictheme.databinding.Page2FragmentBinding
 
 

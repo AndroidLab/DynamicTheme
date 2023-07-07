@@ -2,7 +2,6 @@ package com.alab.dynamic_theme
 
 import android.animation.Animator
 import android.content.Context
-import android.content.ContextWrapper
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -23,6 +22,12 @@ class DynamicThemeSwitcher @JvmOverloads constructor(
 
     init {
         _binding.dynamicThemeSwitcher.apply {
+            Utils.getDynamicThemeActivity(context)?.let {
+                DynamicThemeManager.manager.themeLiveData.observe(it) {
+                    setThemeSwitcherState(this)
+                }
+            }
+
             setOnClickListener {
                 themeSwitch(this)
             }
@@ -47,36 +52,21 @@ class DynamicThemeSwitcher @JvmOverloads constructor(
     }
 
     private fun themeSwitch(themeSwitcherLottie: LottieAnimationView) {
-        val dynamicThemeActivity = getDynamicThemeActivity()
-        if (dynamicThemeActivity != null) {
-            themeSwitcherLottie.speed =
-                if (DynamicThemeManager.getInstance<DynamicTheme>()
-                        .getCurrentTheme().type == DynamicThemeType.LIGHT
-                ) {
-                    dynamicThemeActivity.changeTheme(
-                        themeSwitcherLottie
-                    )
-                    -1f
-                } else {
-                    dynamicThemeActivity.reverseChangeTheme(
-                        themeSwitcherLottie
-                    )
-                    1f
-                }
-            themeSwitcherLottie.playAnimation()
-
-        }
-    }
-
-    private fun getDynamicThemeActivity(): DynamicThemeActivity<*>? {
-        var localContext = context
-        while (localContext is ContextWrapper) {
-            if (localContext is DynamicThemeActivity<*>) {
-                return localContext
+        themeSwitcherLottie.speed =
+            if (DynamicThemeManager.getInstance<DynamicTheme>()
+                    .getCurrentTheme().type == DynamicThemeType.LIGHT
+            ) {
+                DynamicThemeManager.manager.changeTheme(
+                    themeSwitcherLottie
+                )
+                -1f
+            } else {
+                DynamicThemeManager.manager.reverseChangeTheme(
+                    themeSwitcherLottie
+                )
+                1f
             }
-            localContext = localContext.baseContext
-        }
-        return null
+        themeSwitcherLottie.playAnimation()
     }
 
     private fun LottieAnimationView.onAnimation(

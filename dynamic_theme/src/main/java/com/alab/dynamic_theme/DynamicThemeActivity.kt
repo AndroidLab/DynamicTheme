@@ -3,16 +3,13 @@ package com.alab.dynamic_theme
 import android.animation.Animator
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewAnimationUtils
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import kotlin.math.sqrt
 
 
@@ -44,6 +41,7 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         syncTheme(DynamicThemeManager.getInstance<T>().getCurrentTheme())
+        setStatusBarBackgroundColor()
     }
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
@@ -82,7 +80,7 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
                     FrameLayout.LayoutParams.MATCH_PARENT
                 )
                 decorView = this
-                id = ROOT_ID
+                id = DynamicThemeManager.ROOT_ID
             })
 
             addView(SimpleImageView(context).apply {
@@ -97,26 +95,7 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
     }
 
 
-    /**
-     * Change theme.
-     */
-    fun reverseChangeTheme(view: View, duration: Long = 600) =
-        changeTheme(getViewCoordinates(view), duration, true)
-
-    /**
-     * Change theme.
-     */
-    fun reverseChangeTheme(sourceCoordinate: Coordinate, duration: Long = 600) =
-        changeTheme(sourceCoordinate, duration, true)
-
-    /**
-     * Change theme.
-     */
-    fun changeTheme(view: View, duration: Long = 600) =
-        changeTheme(getViewCoordinates(view), duration)
-
-
-    private fun changeTheme(
+    fun changeTheme(
         sourceCoordinate: Coordinate,
         animDuration: Long = 600,
         isReverse: Boolean = false
@@ -135,12 +114,14 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
         decorView.draw(canvas)
 
         val newThemeType =
-            if (DynamicThemeManager.getInstance<T>().getCurrentTheme().type == DynamicThemeType.LIGHT)
+            if (DynamicThemeManager.getInstance<T>()
+                    .getCurrentTheme().type == DynamicThemeType.LIGHT
+            )
                 DynamicThemeType.DARK
             else
                 DynamicThemeType.LIGHT
 
-        val newTheme = when(newThemeType) {
+        val newTheme = when (newThemeType) {
             DynamicThemeType.LIGHT -> DynamicThemeManager.getInstance<T>().lightDarkThemes.first
             DynamicThemeType.DARK -> DynamicThemeManager.getInstance<T>().lightDarkThemes.second
         }
@@ -149,6 +130,7 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
         DynamicThemeManager.getInstance<T>().setCurrentTheme(newTheme)
 
         syncTheme(newTheme)
+        setStatusBarBackgroundColor()
 
         val finalRadius = sqrt((w * w + h * h).toDouble()).toFloat()
         if (isReverse) {
@@ -200,23 +182,42 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
         anim?.start()
     }
 
-    private fun getViewCoordinates(view: View): Coordinate {
-        return Coordinate(
-            getRelativeLeft(view) + view.width / 2,
-            getRelativeTop(view) + view.height / 2
-        )
-    }
+    private fun setStatusBarBackgroundColor() {
+        if (DynamicThemeManager.manager.getSyncStatusBarIconsColorWithTheme()) {
+            val window = this.window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            val decorView = window.decorView
 
-    private fun getRelativeLeft(myView: View): Int {
-        return if ((myView.parent as View).id == ROOT_ID) myView.left else myView.left + getRelativeLeft(
-            myView.parent as View
-        )
-    }
+            val dynamicThemeType =
+                if (DynamicThemeManager.manager.getSyncStatusBarIconsColorWithThemeReverse()) {
+                    DynamicThemeType.LIGHT
+                } else {
+                    DynamicThemeType.DARK
+                }
 
-    private fun getRelativeTop(myView: View): Int {
-        return if ((myView.parent as View).id == ROOT_ID) myView.top else myView.top + getRelativeTop(
-            myView.parent as View
-        )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.setSystemBarsAppearance(
+                    if (DynamicThemeManager.manager.getCurrentTheme().type == dynamicThemeType) {
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    } else {
+                        0
+                    }, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            } else {
+                var flags = decorView.systemUiVisibility
+                if (DynamicThemeManager.manager.getCurrentTheme().type == dynamicThemeType) {
+                    if (flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR == 0) {
+                        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                        decorView.systemUiVisibility = flags
+                    }
+                } else {
+                    if (flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR != 0) {
+                        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                        decorView.systemUiVisibility = flags
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -234,8 +235,4 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
      * Calling theme synchronization.
      */
     abstract fun syncTheme(appTheme: T)
-
-    companion object {
-        private val ROOT_ID = ViewCompat.generateViewId()
-    }
 }

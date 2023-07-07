@@ -28,8 +28,7 @@ class DrawerFragment : DynamicThemeFragment<MyAppTheme>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        binding.drawerRecycler.adapter = DrawerAdapter(viewLifecycleOwner)
     }
 
     override fun syncTheme(appTheme: MyAppTheme) {
