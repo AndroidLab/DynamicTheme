@@ -11,8 +11,9 @@ import androidx.lifecycle.map
 /**
  * Represents the dynamic theme manager.
  */
-class DynamicThemeManager<T : DynamicTheme>(
-    val lightDarkThemes: Pair<T, T>,
+class DynamicThemeManager<T : DynamicTheme> private constructor(
+    val lightTheme: T,
+    val darkTheme: T,
     private val requireContext: () -> Context
 ) {
 
@@ -34,14 +35,14 @@ class DynamicThemeManager<T : DynamicTheme>(
          * Manager initialization
          */
         fun <T : DynamicTheme> init(
-            lightDarkThemes: Pair<T, T>,
+            lightTheme: T,
+            darkTheme: T,
             requireContext: () -> Context
         ): DynamicThemeManager<T> {
             manager = DynamicThemeManager(
-                lightDarkThemes.apply {
-                    first.context = requireContext()
-                    second.context = requireContext()
-                }, requireContext
+                lightTheme.apply { context = requireContext() },
+                darkTheme.apply { context = requireContext() },
+                requireContext
             )
             return manager as DynamicThemeManager<T>
         }
@@ -72,8 +73,8 @@ class DynamicThemeManager<T : DynamicTheme>(
 
     init {
         _themeLiveData.value = when (themePreferences.dynamicThemeType) {
-            DynamicThemeType.LIGHT -> lightDarkThemes.first
-            DynamicThemeType.DARK -> lightDarkThemes.second
+            DynamicThemeType.LIGHT -> lightTheme
+            DynamicThemeType.DARK -> darkTheme
         }
     }
 

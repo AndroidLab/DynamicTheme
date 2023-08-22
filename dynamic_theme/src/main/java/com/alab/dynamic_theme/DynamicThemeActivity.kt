@@ -122,8 +122,8 @@ abstract class DynamicThemeActivity<T : DynamicTheme> : AppCompatActivity() {
                 DynamicThemeType.LIGHT
 
         val newTheme = when (newThemeType) {
-            DynamicThemeType.LIGHT -> DynamicThemeManager.getInstance<T>().lightDarkThemes.first
-            DynamicThemeType.DARK -> DynamicThemeManager.getInstance<T>().lightDarkThemes.second
+            DynamicThemeType.LIGHT -> DynamicThemeManager.getInstance<T>().lightTheme
+            DynamicThemeType.DARK -> DynamicThemeManager.getInstance<T>().darkTheme
         }
 
         DynamicThemeManager.getInstance<T>().themePreferences.dynamicThemeType = newTheme.type

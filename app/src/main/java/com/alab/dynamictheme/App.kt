@@ -9,9 +9,9 @@ class App : Application() {
         super.onCreate()
 
         DynamicThemeManager.init(
-            Pair(LightTheme(), DarkTheme())
+            LightTheme(), DarkTheme()
         ) {
-            baseContext
+            applicationContext
         }
     }
 }
